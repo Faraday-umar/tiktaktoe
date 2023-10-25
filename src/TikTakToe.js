@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Board from './Board'
 import GameOver from './GameOver'
 import GameState from './GameState'
+import Reset from './Reset'
 
 const PLAYER_X = "X"
 const PLAYER_O = "O"
@@ -29,23 +30,27 @@ const winningCombinations = [
     const tileValue2 = tiles[combo[1]];
     const tileValue3 = tiles[combo[2]];
 
-    if (tileValue1 !== null && tileValue1 === tileValue2 && tileValue1 === tileValue3 )  {
-      setStrikeClass(strikeClass);
+    if (
+      tileValue1 !== null && tileValue1 === tileValue2 && tileValue1 === tileValue3 
+      )  { 
+        setStrikeClass(strikeClass);
 
-      if (tileValue1 === PLAYER_X) {
-        setGameState(GameState.Player_X_wins)
-      } else {
-        setGameState(GameState.Player_O_wins)
-      }
+    if (tileValue1 === PLAYER_X) {
+      setGameState(GameState.Player_X_wins)
+    } else {
+      setGameState(GameState.Player_O_wins)
     }
+    return;
+    }  
 
     
   }
 
-  const areEveryTilesFilled = tiles.every((tile) => tile !== null );
-  if(areEveryTilesFilled) {
-    setGameState(GameState.Draw)
+  const areAllTilesFilledIn = tiles.every((tile) => tile !== null);
+  if (areAllTilesFilledIn) {
+    setGameState(GameState.draw)
   }
+
 }
 
 
@@ -56,12 +61,22 @@ function TikTakToe() {
   const [strikeClass, setStrikeClass] = useState();
   const [gameState, setGameState] = useState(GameState.inProgress);
 
+  const handleReset = () => {
+    setGameState(GameState.inProgress);
+    setTiles(Array(9).fill(null))
+    setPlayerTurn(PLAYER_X);
+    setStrikeClass(null)
+  }
+
 useEffect (() => {
   checkWinner(tiles, setStrikeClass, setGameState)
 }, [tiles])
 
-  const handleTileClick = (index) => {
+  const handleTileClick = (index) => {;
 
+    if(gameState !== GameState.inProgress) {
+      return;
+    }
     if (tiles[index] !== null ) {
       return;
     }
@@ -82,6 +97,7 @@ useEffect (() => {
       <h1> Tic Tac Toe </h1>
     <Board strikeClass={strikeClass} tiles={tiles} playerTurn={playerTurn}  onTileClick = {handleTileClick}/>
     <GameOver gameState={gameState}/>
+    <Reset onReset={handleReset} gameState={gameState} />
     </div>
   )
 }
