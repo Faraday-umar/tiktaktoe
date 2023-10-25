@@ -1,12 +1,19 @@
-import React, {useState, useEffect} from 'react'
+import {useState, useEffect} from 'react'
 import Board from './Board'
 import GameOver from './GameOver'
 import GameState from './GameState'
 import Reset from './Reset'
+import gameOverSoundAsset from './Sounds/game_over.wav'
+import clickSoundAsset from './Sounds/click.wav'
 
 const PLAYER_X = "X"
 const PLAYER_O = "O"
 
+
+const gameOverSound = new Audio(gameOverSoundAsset)
+gameOverSound.volume = 0.2;
+const clickSound = new Audio(clickSoundAsset);
+gameOverSound.volume = 0.5;
 
 const winningCombinations = [
   //Rows
@@ -25,7 +32,7 @@ const winningCombinations = [
 ]
 
  function checkWinner(tiles, setStrikeClass, setGameState) {
-  for (const { combo, strikeClass } of winningCombinations) {
+  for (const { combo, strikeClass } of  winningCombinations) {
     const tileValue1 = tiles[combo[0]];
     const tileValue2 = tiles[combo[1]];
     const tileValue3 = tiles[combo[2]];
@@ -41,18 +48,9 @@ const winningCombinations = [
       setGameState(GameState.Player_O_wins)
     }
     return;
-    }  
-
-    
+    } 
   }
-
-  const areAllTilesFilledIn = tiles.every((tile) => tile !== null);
-  if (areAllTilesFilledIn) {
-    setGameState(GameState.draw)
-  }
-
-}
-
+ }
 
 function TikTakToe() {
 
@@ -72,6 +70,18 @@ useEffect (() => {
   checkWinner(tiles, setStrikeClass, setGameState)
 }, [tiles])
 
+useEffect(() => {
+  if (tiles.some((tile) => tile !== null )) {
+    clickSound.play();
+  } 
+}, [tiles])
+
+useEffect(() => {
+  if (gameState !== GameState.inProgress) {
+    gameOverSound.play();
+  }
+}, [gameState])
+
   const handleTileClick = (index) => {;
 
     if(gameState !== GameState.inProgress) {
@@ -81,7 +91,7 @@ useEffect (() => {
       return;
     }
 
-    const newTiles = {...tiles}
+    const newTiles =[...tiles]
     newTiles[index] = playerTurn;
     setTiles(newTiles);
 

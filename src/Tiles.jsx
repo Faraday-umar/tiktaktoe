@@ -7,9 +7,13 @@ function Tiles({className, value, onClick, playerTurn }) {
     if (value == null && playerTurn !== null) {
         hoverClass = `${playerTurn.toLowerCase()}-hover`
     } 
+
+    const sound = () => {
+
+    }
     
   return (
-    <div onClick={onClick}  className={`tile ${className}  ${hoverClass} `} >
+    <div onClick={onClick} className={`tile ${className}  ${hoverClass} `} >
       {value}
     </div>
   )
